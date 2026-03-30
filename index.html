@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="step-register" class="fade-in">
+            <span class="emoji-header">🧔</span>
+            <h1>Стань Тайным Другом!</h1>
+            <p style="margin-bottom: 20px; color: #636e72;">Введи свое имя, чтобы получить задание.</p>
+            
+            <div class="input-group">
+                <label for="username">Ваше имя</label>
+                <input type="text" id="username" placeholder="Например: Иван" autocomplete="off">
+            </div>
+            
+            <button id="btn-join">Участвовать / Получить подарок</button>
+            <p id="error-msg" style="color: red; font-size: 0.9rem; margin-top: 10px;"></p>
+        </div>
+
+        <div id="step-result" class="hidden">
+            <span class="emoji-header">🎁</span>
+            <h1 id="greeting-text"></h1>
+            
+            <div style="background: #f1f2f6; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <p style="margin: 0;">Твой тайный друг:</p>
+                <span id="friend-display" class="friend-name"></span>
+                <p style="font-size: 0.8rem; color: #b2bec3;">Не забудь оставить пожелание!</p>
+            </div>
+
+            <div class="input-group">
+                <label for="wish-input">Твое пожелание другу</label>
+                <textarea id="wish-input" placeholder="Напиши что-нибудь приятное..."></textarea>
+            </div>
+
+            <button id="btn-send-wish">Отправить пожелание</button>
+            <p id="success-msg" style="color: green; font-size: 0.9rem; margin-top: 10px;" class="hidden">Пожелание отправлено!</p>
+        </div>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
