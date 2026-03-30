@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'https://your-server-api.com/api'; // тут короче должна быть ссылка на сервер(сотри этот комментарий)
+    const API_BASE_URL = 'https://your-server-api.com/api';
     
     const joinSection = document.querySelector('.join-section') || document.body; 
     const nameInput = document.getElementById('user-name');
