@@ -1,15 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'https://your-server-api.com/api';
+    const API_BASE_URL = '/api/santa';
     
-    const joinSection = document.querySelector('.join-section') || document.body; 
+    const joinSection = document.querySelector('.join-section');
     const nameInput = document.getElementById('user-name');
     const joinBtn = document.getElementById('join-btn');
-    
+
     const resultSection = document.getElementById('result-section');
-    const friendNameDisplay = document.getElementById('friend-name');
     const wishTextarea = document.getElementById('wish-input');
     const sendWishBtn = document.getElementById('send-wish-btn');
     const statusMessage = document.getElementById('status-message');
+    const greetingText = document.getElementById('greeting-text');
+    const friendWishDisplay = document.getElementById('friend-wish-display');
+
+    function showResultSection(userName, friendName) {
+        if (joinSection) joinSection.classList.add('hidden');
+        
+        if (resultSection) {
+            resultSection.classList.remove('hidden');
+            resultSection.classList.add('fade-in');
+            
+            if (greetingText) {
+                if (friendName) {
+                    greetingText.innerHTML = `Привет, <b>${userName}</b>!<br>Твой тайный друг: <span class="friend-name">${friendName}</span><br>Не забудь оставить пожелание!`;
+                } else {
+                    greetingText.innerHTML = `Привет, <b>${userName}</b>!<br>Вы зарегистрированы. Подождите, пока наберётся минимум 2 участника, чтобы получить друга.`;
+                }
+            }
+        }
+    }
+
+    async function fetchFriendWish(friendName) {
+        if (!friendName || !friendWishDisplay) return;
+        
+        try {
+            const res = await fetch(`${API_BASE_URL}/wish/${encodeURIComponent(friendName)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.wish && data.wish.trim() !== '') {
+                    friendWishDisplay.innerHTML = `<p><strong>📜 Пожелание от твоего друга:</strong><br>"${data.wish}"</p>`;
+                    friendWishDisplay.style.display = 'block';
+                    friendWishDisplay.classList.add('fade-in');
+                }
+            }
+        } catch (err) {
+            console.error('Не удалось загрузить пожелание друга:', err);
+        }
+    }
 
     if (joinBtn) {
         joinBtn.addEventListener('click', async () => {
@@ -26,21 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/register`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: userName })
                 });
 
-                if (!response.ok) throw new Error('Ошибка сети');
-
-                const data = await response.json();
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || 'Ошибка сети');
+                }
                 
-                showResultSection(userName, data.friendName);
+                const data = await response.json();
+                showResultSection(data.userName, data.giftFor);
+
+                if (data.giftFor) {
+                    fetchFriendWish(data.giftFor);
+                }
 
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Не удалось подключиться к серверу. Попробуйте позже.');
+                alert(error.message || 'Не удалось подключиться к серверу. Попробуйте позже.');
                 joinBtn.disabled = false;
                 joinBtn.textContent = 'Участвовать / Получить подарок';
             }
@@ -50,9 +90,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sendWishBtn) {
         sendWishBtn.addEventListener('click', async () => {
             const wishText = wishTextarea.value.trim();
-            const userName = nameInput.value; 
+            const userName = nameInput.value.trim(); 
+            
             if (!wishText) {
                 alert('Пожелание не может быть пустым!');
+                return;
+            }
+
+            if (!userName) {
+                alert('Пожалуйста, сначала введите ваше имя!');
                 return;
             }
 
@@ -60,18 +106,19 @@ document.addEventListener('DOMContentLoaded', () => {
             sendWishBtn.textContent = 'Отправка...';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/send-wish`, {
+                const response = await fetch(`${API_BASE_URL}/wish`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        from: userName, 
+                        name: userName, 
                         wish: wishText 
                     })
                 });
 
-                if (!response.ok) throw new Error('Ошибка отправки');
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || 'Ошибка отправки');
+                }
 
                 statusMessage.textContent = 'Пожелание отправлено! 🎉';
                 statusMessage.style.color = 'green';
@@ -84,25 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Не удалось отправить пожелание.');
+                alert(error.message || 'Не удалось отправить пожелание.');
                 sendWishBtn.disabled = false;
                 sendWishBtn.textContent = 'Отправить пожелание';
             }
         });
-    }
-
-
-    function showResultSection(userName, friendName) {
-        if (joinSection) joinSection.classList.add('hidden');
-        
-        if (resultSection) {
-            resultSection.classList.remove('hidden');
-            resultSection.classList.add('fade-in');
-            
-            const greeting = document.getElementById('greeting-text');
-            if (greeting) {
-                greeting.innerHTML = `Привет, <b>${userName}</b>!<br>Твой тайный друг: <span class="friend-name">${friendName}</span><br>Не забудь оставить пожелание!`;
-            }
-        }
     }
 });
