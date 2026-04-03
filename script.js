@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'https://api/santa';
+    const API_BASE_URL = '/api/santa';
     
     const joinSection = document.querySelector('.join-section');
     const userNameInput = document.getElementById('user-name');
