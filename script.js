@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_BASE_URL = '/api/santa';
     
     const joinSection = document.querySelector('.join-section');
-    const nameInput = document.getElementById('user-name');
-    const joinBtn = document.getElementById('join-btn');
+    const userNameInput = document.getElementById('user-name');
+    const registerBtn = document.getElementById('join-btn');
 
     const resultSection = document.getElementById('result-section');
     const wishTextarea = document.getElementById('wish-input');
@@ -47,17 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (joinBtn) {
-        joinBtn.addEventListener('click', async () => {
-            const userName = nameInput.value.trim();
+    if (registerBtn) {
+        registerBtn.addEventListener('click', async () => {
+            const userName = userNameInput.value.trim();
 
             if (!userName) {
                 alert('Пожалуйста, введите ваше имя!');
                 return;
             }
 
-            joinBtn.disabled = true;
-            joinBtn.textContent = 'Загрузка...';
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Загрузка...';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/register`, {
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Ошибка:', error);
                 alert(error.message || 'Не удалось подключиться к серверу. Попробуйте позже.');
-                joinBtn.disabled = false;
-                joinBtn.textContent = 'Участвовать / Получить подарок';
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Участвовать / Получить подарок';
             }
         });
     }
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sendWishBtn) {
         sendWishBtn.addEventListener('click', async () => {
             const wishText = wishTextarea.value.trim();
-            const userName = nameInput.value.trim(); 
+            const userName = userNameInput.value.trim(); 
             
             if (!wishText) {
                 alert('Пожелание не может быть пустым!');
