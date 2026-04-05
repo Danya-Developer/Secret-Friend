@@ -13,25 +13,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const friendWishDisplay = document.getElementById('friend-wish-display');
 
     async function addParticipant(name) {
-    await fetch('/api/participants', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        await fetch('/api/participants', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
     });
     loadParticipants(); 
-}
+    }
 
-async function drawPairs() {
-    const response = await fetch('/api/draw', { method: 'POST' });
-    const pairs = await response.json();
-    displayPairs(pairs);
-}
+    async function drawPairs() {
+        const response = await fetch('/api/draw', { method: 'POST' });
+        const pairs = await response.json();
+        displayPairs(pairs);
+    }
 
-async function loadParticipants() {
-    const res = await fetch('/api/participants');
-    const participants = await res.json();
-    renderList(participants);
-}
+    async function loadParticipants() {
+        const res = await fetch('/api/participants');
+        const participants = await res.json();
+        renderList(participants);
+    }
     function showResultSection(userName, friendName) {
         if (joinSection) joinSection.classList.add('hidden');
         
